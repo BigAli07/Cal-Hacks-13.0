@@ -11,7 +11,8 @@ The earlier report that the Codex backend was unpublished is **obsolete**. This 
 | Repository | https://github.com/BigAli07/Cal-Hacks-13.0 |
 | Foundation | `origin/codex/lastping-backend-handoff` @ `a289776` |
 | Integration branch | `cursor/lastping-integrated` |
-| PR vs backend | opened after push; not merged |
+| Commit | `9dc5c95261b6ee5bfe9ae434e447ecced849e85a` (verified on origin) |
+| PR vs backend | https://github.com/BigAli07/Cal-Hacks-13.0/pull/3 (not merged) |
 | Previous UI PR | https://github.com/BigAli07/Cal-Hacks-13.0/pull/1 left **unmerged** |
 
 `core/` was not replaced. Placeholder `engine.py` from `cursor/interface` is **not** on this branch.
