@@ -7,23 +7,26 @@ Status audited on 2026-10-25 in `/Users/big_ali07/Documents/ChatGPT/cal hacks`.
 ### Implemented and verified
 
 - Dedicated branch: `codex/lastping-backend-handoff`.
+- Repository: `https://github.com/BigAli07/Cal-Hacks-13.0.git`, configured as `origin` for fetch and push.
 - Implementation preservation commit: `231aada` (`Preserve LastPing backend and validated replay`).
+- Previously preserved handoff HEAD `465a0e61cadaaf7a86f5d81fec56ff0755680f57` remains in the branch ancestry unchanged.
 - This status document is committed separately on the same branch; its commit is the branch `HEAD` after the handoff commit.
-- The branch is based on local `main` commit `c6626a3`. The existing vision/haptics project in `pi/`, `web/`, `arduino/`, and its tests remains intact.
+- Remote `main` was non-empty at `a8234cbb94059b866f11dcec688af50c98949b20` and initially contained only its independently created README. The remote history was fetched and non-destructively joined to the handoff branch in merge commit `72a9b5c3fa40c049427a2db8056e4b367b02da86`; both histories remain ancestors.
+- The branch was pushed without force and independently verified with `git ls-remote` at `72a9b5c3fa40c049427a2db8056e4b367b02da86` before this final status update.
+- Pull request [#2](https://github.com/BigAli07/Cal-Hacks-13.0/pull/2) is open from `codex/lastping-backend-handoff` into `main` and is intentionally unmerged.
+- The local project history is based on commit `c6626a3`. The existing vision/haptics project in `pi/`, `web/`, `arduino/`, and its tests remains intact.
 - Relevant LastPing files were reviewed and staged explicitly. `.venv`, dependency folders, ignored delivery ZIPs, `.DS_Store`, credentials, and environment files were not included.
 - The 10,600,024-byte SatNOGS OGG is included because the observation data is documented as CC BY-SA 4.0. Its attribution and source are in `data/real/README.md` and `DATA_SOURCES.md`; its SHA-256 is `c317e44ccddb890023a1b863c326fb856525902da3aeefa3355d566fe64aaf63`.
 - No required large file is stored separately. `deliverables/lastping-project.zip` remains ignored and is not part of the Git history.
 
 ### Implemented but unverified
 
-- Remote publication is not verified. There was no Git remote configured during this audit.
 - A clean-clone installation on another machine has not been run during this handoff.
 - The saved classifier was not retrained during this handoff. Its loading, metadata, features, and fixed test benchmark were exercised.
 
 ### Missing or blocked
 
-- Push and pull-request creation are blocked because the requested target was supplied as the literal placeholder `<REPOSITORY_URL>`. With no usable remote URL, remote identity, access, default branch, and remote conflicts cannot be checked safely.
-- No fetch was possible because no remote exists. No claim is made that a remote branch or PR exists.
+- No repository-publication blocker remains. Merge of PR #2 is deliberately left for human review.
 
 ## Contribution and ownership
 
@@ -147,7 +150,7 @@ Status audited on 2026-10-25 in `/Users/big_ali07/Documents/ChatGPT/cal hacks`.
 
 ### Missing or blocked
 
-- Remote CI could not be run because no target remote or pull request is available.
+- No repository CI workflow or completed PR check is currently verified.
 
 ## Commands
 
@@ -202,12 +205,12 @@ Training is intentionally explicit and overwrites the saved synthetic model/meta
 
 ### Missing or blocked
 
-1. Provide the exact GitHub repository URL and grant write access. Then add/fetch the remote, verify repository identity and history, inspect divergence, push this branch, verify the remote commit SHA, and open an unmerged PR.
-2. Reconcile `app.py` with Cursor's current branch through a reviewed merge or PR. Its written ownership is Cursor-attributed/ambiguous, and no remote base was available for comparison.
+1. Review and merge PR [#2](https://github.com/BigAli07/Cal-Hacks-13.0/pull/2) when the repository owner is satisfied. This handoff intentionally does not merge it.
+2. Reconcile `app.py` with any subsequent Cursor work before merging. Its written ownership is Cursor-attributed/ambiguous; the remote `main` inspected during this handoff contained no Cursor implementation to compare.
 3. Build a licensed real corpus containing verified positives and negatives across passes, stations, receivers, satellites, and interference conditions; retrain/calibrate or remove the real ML score based on that evidence.
 4. Add raw-I/Q or clearly specified receiver formats if required. The present real importer only supports documented target-Doppler-corrected mono audio.
 5. Add live SDR/stream ingestion only if live operation is an actual product requirement.
-6. Add remote CI and clean-clone reproducibility checks after the repository is connected.
+6. Add remote CI and clean-clone reproducibility checks.
 
 ### Implemented but unverified
 
