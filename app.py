@@ -66,6 +66,10 @@ def reset_real():
     st.session_state.real_result = None
 
 
+def clear_real_result():
+    st.session_state.real_result = None
+
+
 def apply_preset_defaults():
     preset = st.session_state.preset
     st.session_state.strength = PRESET_DEFAULT_STRENGTH_DB[preset]
@@ -154,6 +158,7 @@ with st.sidebar:
             "Recording source",
             ["Bundled validated SatNOGS observation", "Upload recording and metadata"],
             key="real_source",
+            on_change=clear_real_result,
         )
         uploaded_recording = uploaded_metadata = None
         if st.session_state.real_source == "Upload recording and metadata":
@@ -162,6 +167,7 @@ with st.sidebar:
         run_real = st.button("Analyze recording", type="primary", width="stretch")
         st.button("Reset", on_click=reset_real, width="stretch")
         if run_real:
+            st.session_state.real_result = None
             try:
                 with st.spinner("Validating recording, calculating spectrogram and ranking candidates…"):
                     if st.session_state.real_source == "Bundled validated SatNOGS observation":
