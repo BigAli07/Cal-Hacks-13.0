@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+.env
+.env.*
+*.zip
+.DS_Store
+artifacts/*.wav
+artifacts/*.iq
+artifacts/*.npy
