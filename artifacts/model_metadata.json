@@ -1,0 +1,52 @@
+{
+  "created_utc": "2026-10-25T11:43:22.525669+00:00",
+  "model_path": "lastping_model.joblib",
+  "feature_schema": [
+    "baseline_peak",
+    "track_accumulation",
+    "track_background_contrast",
+    "supported_fraction",
+    "persistence",
+    "stationary_contrast"
+  ],
+  "generator": {
+    "version": "lastping-sim-v1",
+    "shape": [
+      128,
+      192
+    ],
+    "duration_s": 240.0,
+    "signal_excess_db_train_range": [
+      -6.0,
+      5.0
+    ]
+  },
+  "splits": {
+    "train": [
+      10000,
+      10499
+    ],
+    "validation": [
+      20000,
+      20159
+    ],
+    "test": [
+      30000,
+      30199
+    ]
+  },
+  "counts": {
+    "training": 500,
+    "validation": 160
+  },
+  "thresholds": {
+    "target_validation_false_alarm_rate": 0.05,
+    "baseline": 6.5810370445251465,
+    "physics": 2.0950005866045838,
+    "ml": 0.6038558419018233
+  },
+  "versions": {
+    "python": "3.12.14",
+    "scikit_learn": "1.9.1"
+  }
+}

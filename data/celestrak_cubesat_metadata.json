@@ -1,0 +1,9 @@
+{
+  "source_url": "https://celestrak.org/NORAD/elements/gp.php?GROUP=CUBESAT&FORMAT=TLE",
+  "retrieved_utc": "2026-10-25T11:42:39.347900+00:00",
+  "response_file": "celestrak_cubesat.tle",
+  "selected_satellite_name": "CUTE-1 (CO-55)",
+  "selected_catalog_id": "27844",
+  "selected_orbital_epoch_utc": "2026-10-24T06:58:10.101196+00:00",
+  "selected_recording_start_utc": "2026-10-25T13:57:08.563252+00:00"
+}

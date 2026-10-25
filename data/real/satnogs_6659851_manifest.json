@@ -1,0 +1,99 @@
+{
+  "schema": "lastping-real-recording-v1",
+  "observation_id": 6659851,
+  "observation_url": "https://network.satnogs.org/observations/6659851/",
+  "metadata_url": "https://network.satnogs.org/api/observations/6659851/?format=json",
+  "recording_url": "https://archive.org/download/satnogs-observations-006650001-006660000/satnogs-observations-006659001-006660000.zip/satnogs_6659851_2022-10-26T04-12-41.ogg",
+  "recording_file": "satnogs_6659851_2022-10-26T04-12-41.ogg",
+  "recording_sha256": "c317e44ccddb890023a1b863c326fb856525902da3aeefa3355d566fe64aaf63",
+  "metadata_file": "satnogs_6659851_observation.json",
+  "metadata_sha256": "e47c5a0ef8faeac94dd03fcd76d796a5a1811132b98adc7828edb8ac310246f0",
+  "license": "CC BY-SA 4.0",
+  "attribution": "SatNOGS Network observation 6659851; ground station PE0SAT-32",
+  "acquisition_start_utc": "2022-10-26T04:12:41Z",
+  "scheduled_end_utc": "2022-10-26T04:18:37Z",
+  "decoded_audio_duration_s": 352.796,
+  "receiver": {
+    "station_id": 2176,
+    "station_name": "PE0SAT-32",
+    "latitude_deg": 51.721268,
+    "longitude_deg": 5.029,
+    "elevation_m": 5.0,
+    "hardware": "RTL-SDR serial 00001470",
+    "rf_sample_rate_hz": 2048000,
+    "gain_db": 42.1,
+    "ppm_correction": -1
+  },
+  "recording_format": {
+    "container": "OGG",
+    "codec": "Vorbis",
+    "decoded_sample_rate_hz": 48000,
+    "channels": 1,
+    "channel_interpretation": "Real part of target-Doppler-corrected BPSK complex baseband after +12 kHz rotation",
+    "amplitude_units": "normalized lossy decoder amplitude; not calibrated RF voltage or power",
+    "audio_if_hz": 12000,
+    "frequency_reference": "Target-specific rigctl Doppler correction at 145.935 MHz, then +12 kHz audio rotation",
+    "doppler_correction_applied": true,
+    "source_flowgraph": "SatNOGS satnogs-flowgraphs tag 2.3, generic/bpsk.grc",
+    "source_flowgraph_url": "https://gitlab.com/librespacefoundation/satnogs/satnogs-flowgraphs/-/blob/2.3/generic/bpsk.grc"
+  },
+  "transmitter": {
+    "frequency_hz": 145935000,
+    "mode": "BPSK",
+    "baud": 1200,
+    "uuid": "Pt4MFHSC8UFHu3aTQTLz9K"
+  },
+  "scheduled_target": {
+    "name": "FUNCUBE 1",
+    "catalog_id": "39444",
+    "tle_source": "Space-Track.org via SatNOGS observation metadata",
+    "tle0": "0 FUNCUBE 1",
+    "tle1": "1 39444U 13066AE  22298.34474311  .00002721  00000-0  32421-3 0  9997",
+    "tle2": "2 39444  97.6409 266.5449 0054967 327.7392  32.0465 14.84053760480786"
+  },
+  "candidate_catalog": [
+    {
+      "name": "FUNCUBE 1",
+      "catalog_id": "39444",
+      "tle0": "0 FUNCUBE 1",
+      "tle1": "1 39444U 13066AE  22298.34474311  .00002721  00000-0  32421-3 0  9997",
+      "tle2": "2 39444  97.6409 266.5449 0054967 327.7392  32.0465 14.84053760480786",
+      "tle_source_url": "https://network.satnogs.org/api/observations/6659851/?format=json"
+    },
+    {
+      "name": "OSCAR 11 (UoSAT 2)",
+      "catalog_id": "14781",
+      "tle0": "0 OSCAR 11 (UoSAT 2)",
+      "tle1": "1 14781U 84021B   22298.40309793  .00000893  00000-0  11359-3 0  9996",
+      "tle2": "2 14781  97.6317 280.0192 0006791 251.5307 108.5170 14.83908243 59316",
+      "tle_source_url": "https://network.satnogs.org/api/observations/6659848/?format=json"
+    },
+    {
+      "name": "AAUSAT CUBESAT 2",
+      "catalog_id": "32788",
+      "tle0": "0 AAUSAT CUBESAT 2",
+      "tle1": "1 32788U 08021F   22298.42913241  .00004869  00000-0  40970-3 0  9998",
+      "tle2": "2 32788  97.5464 279.3128 0012743  55.2654 304.9767 14.98631829787897",
+      "tle_source_url": "https://network.satnogs.org/api/observations/6659850/?format=json"
+    },
+    {
+      "name": "OSCAR 7",
+      "catalog_id": "7530",
+      "tle0": "0 OSCAR 7",
+      "tle1": "1 07530U 74089B   22298.43838396 -.00000046  00000-0  15289-5 0  9991",
+      "tle2": "2 07530 101.9218 278.7896 0012239 151.4578  16.9860 12.53658063193758",
+      "tle_source_url": "https://network.satnogs.org/api/observations/6659856/?format=json"
+    }
+  ],
+  "positive_support": {
+    "satnogs_status": "good",
+    "decoded_frame_count": 53,
+    "basis": "SatNOGS API lists 53 timestamped demodulated frame artifacts; scheduling label alone is not used as proof"
+  },
+  "known_limitations": [
+    "OGG is lossy and contains a single real audio channel, not archived raw RF I/Q.",
+    "Decoded duration is 3.204 seconds shorter than the scheduled observation; no missing samples or timestamps are invented.",
+    "Amplitude is uncalibrated and cannot establish receiver sensitivity.",
+    "All incorrect catalog candidates are below the receiver horizon during this replay."
+  ]
+}

@@ -1,0 +1,2 @@
+"""LastPing scientific core."""
+
