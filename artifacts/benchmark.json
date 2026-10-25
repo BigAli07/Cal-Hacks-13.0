@@ -1,0 +1,81 @@
+{
+  "status": "ok",
+  "created_utc": "2026-10-25T13:06:08.446068+00:00",
+  "recording_duration_s": 240.0,
+  "test_recordings": 200,
+  "signal_count": 100,
+  "negative_count": 100,
+  "negative_interference_count": 32,
+  "split_seed_ranges": {
+    "train": [
+      10000,
+      10499
+    ],
+    "validation": [
+      20000,
+      20159
+    ],
+    "test": [
+      30000,
+      30199
+    ]
+  },
+  "signal_excess_db_test_distribution": "uniform [-6, 5] dB for positive examples",
+  "validation_target_false_alarm_rate": 0.05,
+  "thresholds_fixed_from_validation": {
+    "target_validation_false_alarm_rate": 0.05,
+    "baseline": 6.5810370445251465,
+    "physics": 2.0950005866045838,
+    "ml": 0.6038558419018233
+  },
+  "methods": {
+    "baseline": {
+      "recall": 0.09,
+      "recall_numerator": 9,
+      "recall_denominator": 100,
+      "false_alarm_rate": 0.07,
+      "false_alarm_numerator": 7,
+      "false_alarm_denominator": 100,
+      "inference_runtime_total_s": 0.07681354810483754
+    },
+    "physics": {
+      "recall": 0.6,
+      "recall_numerator": 60,
+      "recall_denominator": 100,
+      "false_alarm_rate": 0.11,
+      "false_alarm_numerator": 11,
+      "false_alarm_denominator": 100,
+      "inference_runtime_total_s": 0.3037537893978879
+    },
+    "ml": {
+      "recall": 0.6,
+      "recall_numerator": 60,
+      "recall_denominator": 100,
+      "false_alarm_rate": 0.08,
+      "false_alarm_numerator": 8,
+      "false_alarm_denominator": 100,
+      "inference_runtime_total_s": 0.3752048589522019,
+      "model_only_runtime_total_s": 0.0022429589880630374
+    }
+  },
+  "runtime_note": "CPU wall time; recording duration is simulated and is not included as waiting time.",
+  "orbit_provenance": {
+    "kind": "real_public_orbital_elements",
+    "provider": "CelesTrak",
+    "source_url": "https://celestrak.org/NORAD/elements/gp.php?GROUP=CUBESAT&FORMAT=TLE",
+    "retrieved_utc": "2026-10-25T11:42:39.347900+00:00",
+    "satellite_name": "CUTE-1 (CO-55)",
+    "catalog_id": "27844",
+    "orbital_epoch_utc": "2026-10-24T06:58:10.101196+00:00",
+    "recording_start_utc": "2026-10-25T13:57:08.563252+00:00",
+    "tle_age_at_recording_days": 1.2909544219444444,
+    "stale_warning": false,
+    "observer": {
+      "latitude_deg": 37.8715,
+      "longitude_deg": -122.273,
+      "elevation_m": 52.0
+    },
+    "maximum_segment_elevation_deg": 34.561091258760406,
+    "carrier_assumption_hz": 437000000.0
+  }
+}

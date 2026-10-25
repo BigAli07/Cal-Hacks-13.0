@@ -1,0 +1,35 @@
+{
+  "dataset": "COCO 2017",
+  "dataset_url": "https://cocodataset.org/",
+  "class_file": "ultralytics/cfg/datasets/coco8.yaml",
+  "obstacle_classes": [
+    "person",
+    "bicycle",
+    "car",
+    "motorcycle",
+    "bus",
+    "train",
+    "truck",
+    "bench",
+    "chair",
+    "couch",
+    "potted plant",
+    "bed",
+    "dining table",
+    "suitcase",
+    "trash can",
+    "bottle",
+    "cup",
+    "drink can",
+    "tin can"
+  ],
+  "open_vocabulary_classes": [
+    "trash can",
+    "drink can",
+    "tin can"
+  ],
+  "spoken_names": {
+    "dining table": "table",
+    "potted plant": "plant"
+  }
+}
