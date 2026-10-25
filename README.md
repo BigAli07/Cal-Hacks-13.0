@@ -1,4 +1,6 @@
-# LastPing
+# Cal-Hacks-13.0
+
+## LastPing
 
 LastPing replays a validated archived satellite reception through three
 CPU-only evidence methods: a signal-strength baseline, a bounded
