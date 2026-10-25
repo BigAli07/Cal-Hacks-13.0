@@ -1,77 +1,58 @@
-# LastPing verified video script (90 seconds)
+# LastPing submission video script
 
-## Script and screen direction
+About 90 seconds. Speak only what is on screen or in this script. Follow [DEMO.md](DEMO.md) so the recording is the bundled SatNOGS replay from commit `787332358c99af318137b44d563f8d0c9bc31a65`.
 
-**0–10 seconds — Problem**
+No video file was created in this session. `screencapture -V` exited immediately with status 1 and wrote no file, and `ffmpeg` is not installed. Manual capture steps are at the end.
 
-Show the title and archived replay controls.
+## 0–15 seconds — the problem
 
-“Weak intermittent satellite signals can disappear into noise and
-interference. LastPing tests whether known orbital motion adds useful evidence,
-without treating a Doppler match as proof of identity.”
+Screen: LastPing is open. Sidebar shows **Real recording replay** and **Bundled validated SatNOGS observation**. Do not click yet. The title “Search for the signal that survived” is visible.
 
-**10–23 seconds — Real archived source**
+Narration: “A satellite-like trace is easy to confuse with noise, and more than one satellite can be a plausible match. LastPing takes one archived reception and asks which historical satellite tracks agree with the signal that was actually measured.”
 
-Click **Analyze recording**, then point to provenance.
+## 15–30 seconds — the recording
 
-“This is hash-verified SatNOGS observation 6659851 from 2022—not a simulation
-and not live. It is a 352.796-second BPSK recording from receiver PE0SAT-32 at
-145.935 megahertz.”
+Screen: At 15 seconds, click **Analyze recording** once. The observation id, time, and station are not on the empty screen; they appear on the source line when the result loads. Point to **Radio: archived real (not live)** and read that line. Do not change the source dropdown.
 
-**23–43 seconds — Measured evidence versus predictions**
+Narration: “This is archived replay, not a live receiver. The file is SatNOGS observation 6659851, acquired 26 October 2022 at 04:12:41 UTC by station PE0SAT-32. The scheduled signal is FUNCUBE-1 at 145.935 megahertz, BPSK.”
 
-Pan across the waterfall and legend.
+## 30–60 seconds — analysis
 
-“The waterfall is calculated from the recording. Dashed lines are historical
-orbital predictions, red is the searched best-fit template, and cyan is an
-independently extracted measured energy ridge. Candidate templates do not
-create that ridge.”
+Screen: The result is on screen. Move in this order: **Candidate beacon** for FUNCUBE 1 / NORAD 39444, the identity caption, the waterfall and its legend, then the candidate table. Pause on the above-horizon column. Predicted tracks are dashed. The fitted template is the solid orange line. The independent ridge is the white markers.
 
-**43–59 seconds — Receiver correction and ranking**
+Narration: “The waterfall is 706 by 1025 bins of that archived audio. The white ridge is energy measured from the spectrum before any template is applied. Dashed lines are historical Doppler tracks, and the orange line is the best fitted template. FUNCUBE-1 ranks first, with physics score 6.825, a −500 hertz offset, 0.993 above-horizon support, and a 283.8 hertz residual to the ridge. The other three candidates have zero above-horizon support. The label is Candidate beacon: a candidate match, not a confirmed identity.”
 
-Show the candidate table.
+Read the processing time from the line that begins “Full processing” if it is already visible. Do not quote a time that is not on screen.
 
-“Because SatNOGS corrected this audio for its scheduled target, LastPing
-subtracts that target's predicted Doppler when reconstructing every comparison.
-The scheduled identity is not a ranking feature. FUNCUBE-1 ranks first at
-6.825, with a 4.177 margin and 99.3 percent visibility support.”
+## 60–75 seconds — the model
 
-**59–72 seconds — Incorrect candidates**
+Screen: Scroll to the caption under **Candidate evidence** and the ML card. The visible score is **1.000**. The card says **Experimental, uncalibrated on real RF**. The metric label is **synthetic-model score**.
 
-Move down the remaining table rows.
+Narration: “The classifier was trained on 500 synthetic examples. On this real recording the score is exploratory and uncalibrated. One point zero zero zero is not certainty, and it is not the probability that a satellite was recovered. Synthetic thresholds are not used to make this decision.”
 
-“The three alternatives are genuine satellites with historical TLEs, not
-fabricated negatives. All are below this receiver's horizon for the pass.
-SatNOGS independently published 53 decoded frames for the scheduled target.”
+## 75–90 seconds — what it establishes
 
-**72–82 seconds — ML contribution**
+Screen: Return to the candidate table so FUNCUBE-1’s 0.993 and the other candidates’ 0.000 above-horizon values are visible. Leave the synthetic mode, train button, and benchmark button untouched.
 
-Show the method cards and warning text.
+Narration: “This release validates one positive archived replay. The measured ridge agrees with FUNCUBE-1’s historical track, and the incorrect candidates are below the horizon. The useful next recording is another in-band pass where a competing satellite is actually above the horizon, so a real miss can be tested. It does not establish live reception or general identification accuracy.”
 
-“The ML model was trained on 500 synthetic recordings. Its real score is
-explicitly experimental and uncalibrated, and it does not decide this archived
-result.”
+## Manual capture
 
-**82–90 seconds — Measured performance and next work**
+No video was made.
 
-Show processing time, then the closing limitation.
+1. Restart Streamlit using the commands in [DEMO.md](DEMO.md) and confirm commit `787332358c99af318137b44d563f8d0c9bc31a65`.
+2. Open http://localhost:8503 in a normal browser, full width, with the sidebar visible. Close other windows.
+3. Record with QuickTime Player → File → New Screen Recording, or, after macOS Screen Recording permission is granted:
 
-“Analysis took about four seconds. Synthetic tests measure 60 percent recall
-and 8 percent false alarms for ML, but one real positive cannot measure either
-on real RF. Next we need verified real negatives and diverse receivers.”
+```bash
+screencapture -x -v -V 90 -k lastping-demo.mov
+```
 
-## Exact capture instructions
+4. Speak this script while doing only the clicks above. Start on the empty bundled screen, click **Analyze recording** at 15 seconds, and stop at 90 seconds.
+5. Play the file from start to end. Confirm the waterfall, FUNCUBE-1 row, and 1.000 caption are readable, and that the duration is about 90 seconds:
 
-1. Start the verified app with `.venv/bin/streamlit run app.py`.
-2. Set the browser viewport to at least 1280×720 and keep the sidebar open.
-3. Begin before analysis with the bundled archived source selected.
-4. Record the Analyze click, archived-real banner, provenance, waterfall legend,
-   candidate table, method cards, processing time, JSON download, and Reset.
-5. Capture system audio only if desired; record narration on a quiet microphone.
-6. Export 1920×1080 H.264 with AAC audio, then play the entire exported file and
-   verify readable labels, synchronized audio, and no spinner in the final shot.
+```bash
+mdls -name kMDItemDurationSeconds lastping-demo.mov
+```
 
-No draft video was recorded during verification. The environment exposed only
-the static `screencapture` utility; neither FFmpeg nor OBS (nor another verified
-screen-recording workflow) was available. The live app was visually inspected
-in both the in-app browser and Chrome.
+6. If the on-screen score, time, or label differs from this script, keep the picture and change the narration. Do not edit the picture to invent a detection.
