@@ -1,0 +1,54 @@
+name: LastPing scoped CI
+
+on:
+  push:
+    branches:
+      - cursor/lastping-integrated
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lastping:
+    name: Backend, interface contract, and offline replay
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements-lastping.txt
+            requirements-test.txt
+
+      - name: Install libsndfile
+        run: sudo apt-get update && sudo apt-get install --yes libsndfile1
+
+      - name: Install scoped test dependencies
+        run: python -m pip install --upgrade pip && python -m pip install -r requirements-test.txt
+
+      - name: Compile LastPing sources
+        run: python -m compileall -q app.py core
+
+      - name: Verify saved model artifact
+        run: >-
+          python -c 'from core.training import load_model; model, metadata = load_model();
+          assert model is not None and metadata is not None;
+          assert list(model.named_steps) == ["scaler", "classifier"];
+          assert metadata["counts"]["training"] == 500'
+
+      - name: Run scoped LastPing tests
+        run: python -m pytest -q tests/test_lastping_app.py tests/test_lastping.py tests/test_real_data.py
+
+      - name: Run compact offline replay and strict JSON export
+        run: |
+          python -m core.real_data --output "$RUNNER_TEMP/lastping-real-replay.json"
+          python -c 'import json,sys; result=json.load(open(sys.argv[1], encoding="utf-8")); assert result["status"] == "ok"; assert result["best_candidate"]["catalog_id"] == "39444"; assert "observed_power" not in result' "$RUNNER_TEMP/lastping-real-replay.json"

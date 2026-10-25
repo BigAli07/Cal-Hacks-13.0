@@ -54,6 +54,18 @@ def test_bundled_real_replay_runs_only_on_analyze_and_reset_clears_it():
     assert app.session_state.real_result is None
 
 
+def test_real_source_change_and_missing_upload_clear_previous_result():
+    app = AppTest.from_file(APP).run(timeout=30)
+    app.button[0].click().run(timeout=30)
+    assert app.session_state.real_result is not None
+
+    app.selectbox[0].set_value("Upload recording and metadata").run(timeout=30)
+    assert app.session_state.real_result is None
+    app.button[0].click().run(timeout=30)
+    assert app.session_state.real_result is None
+    assert any("Select both" in error.value for error in app.error)
+
+
 def test_supported_upload_replays_the_same_validated_recording():
     app = AppTest.from_file(APP).run(timeout=30)
     app.selectbox[0].set_value("Upload recording and metadata").run(timeout=30)
