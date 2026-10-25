@@ -13,12 +13,19 @@ from core.real_data import RecordingValidationError
 from core.simulation import PRESETS, PRESET_DEFAULT_STRENGTH_DB
 from core.training import train
 
-st.set_page_config(page_title="LastPing", layout="wide")
+st.set_page_config(page_title="LastPing", layout="wide", initial_sidebar_state="auto")
 
 CONCLUSION_LABELS = {
     "candidate_match": "Candidate beacon",
     "insufficient_evidence": "Insufficient evidence",
-    "ambiguous": "Insufficient evidence",
+    "ambiguous": "Ambiguous",
+}
+
+ORBIT_KIND_LABELS = {
+    "real_public_orbital_elements": "Cached public orbital elements",
+    "synthetic_orbit_fallback": "Synthetic orbit",
+    "historical_tle": "Historical TLE",
+    "live": "Live reception",
 }
 
 PRESET_LABELS = {
@@ -109,6 +116,43 @@ def inject_css() -> None:
         .lp-status { font-size: 1.08rem; font-weight: 700; margin: 0.1rem 0 0.35rem 0; color: #3ec6e0; }
         .lp-status.warn { color: #e8b04a; }
         .lp-score { color: #8aa0b8; font-size: 0.88rem; }
+        @media (max-width: 480px) {
+          [data-testid="stAppViewContainer"]:has([data-testid="stSidebar"][data-collapsed="false"]) {
+            flex-direction: column !important;
+            position: relative !important;
+            height: auto !important;
+            min-height: 100vh;
+            overflow: visible !important;
+          }
+          [data-testid="stSidebar"][data-collapsed="false"] {
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+            height: auto !important;
+            min-height: 0 !important;
+            width: 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+            transform: none !important;
+            z-index: 1 !important;
+            flex: 0 0 auto !important;
+          }
+          [data-testid="stSidebar"][data-collapsed="false"] [data-testid="stSidebarContent"] {
+            width: 100% !important;
+            min-width: 0 !important;
+            height: auto !important;
+            max-height: none !important;
+            position: relative !important;
+          }
+          [data-testid="stAppViewContainer"]:has([data-testid="stSidebar"][data-collapsed="false"]) [data-testid="stMain"] {
+            position: relative !important;
+            width: 100% !important;
+            left: auto !important;
+            top: auto !important;
+            height: auto !important;
+          }
+          [data-testid="stSidebarCollapsedControl"] { z-index: 1000002; }
+        }
         </style>
         """,
         unsafe_allow_html=True,
@@ -117,16 +161,58 @@ def inject_css() -> None:
 
 def heatmap_layout(fig: go.Figure, xaxis: str, yaxis: str, height: int = 560) -> go.Figure:
     fig.update_layout(
+        autosize=True,
         height=height,
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="#0b1220",
         font=dict(color="#e8eef7", size=13),
-        xaxis_title=xaxis,
-        yaxis_title=yaxis,
-        legend={"orientation": "h", "yanchor": "bottom", "y": 1.02, "xanchor": "left", "x": 0, "font": {"size": 10}},
-        margin={"t": 105, "l": 50, "r": 20, "b": 50},
+        legend={
+            "orientation": "h",
+            "yanchor": "bottom",
+            "y": 1.08,
+            "xanchor": "left",
+            "x": 0,
+            "font": {"size": 11},
+            "itemsizing": "constant",
+        },
+        margin={"t": 88, "l": 64, "r": 96, "b": 56},
+        xaxis={"title": xaxis, "automargin": True},
+        yaxis={"title": yaxis, "automargin": True},
     )
     return fig
+
+
+def heatmap_colorbar(title: str) -> dict:
+    return {
+        "title": {"text": title, "side": "right"},
+        "thickness": 14,
+        "len": 0.7,
+        "y": 0.42,
+        "x": 1.02,
+        "xpad": 10,
+    }
+
+
+def show_heatmap(fig: go.Figure) -> None:
+    st.plotly_chart(
+        fig,
+        width="stretch",
+        config={"responsive": True, "displayModeBar": True},
+    )
+
+
+def orbit_kind_label(kind: str | None) -> str:
+    if not kind:
+        return "Orbit: unlabeled"
+    if kind == "live":
+        return "Orbit: live reception"
+    return "Orbit: " + ORBIT_KIND_LABELS.get(kind, "unlabeled")
+
+
+def as_float(value):
+    if value is None:
+        return None
+    return float(value)
 
 
 def track_array(values):
@@ -265,6 +351,10 @@ def render_real(result):
         f"**Result:** {label} · **Best candidate:** {result['best_candidate']['name']} "
         f"(NORAD {result['best_candidate']['catalog_id']})"
     )
+    if result.get("conclusion") == "candidate_match":
+        st.caption("A candidate match does not confirm satellite identity.")
+    elif result.get("conclusion") == "ambiguous":
+        st.caption("Rankings are too close to prefer one candidate. This is not a confirmed detection.")
     st.caption(
         f"Source: {recording['label']} · SatNOGS observation {recording['observation_id']} · "
         f"acquired {recording['acquisition_start_utc']} · "
@@ -290,7 +380,7 @@ def render_real(result):
                 [0.85, "#3ec6e0"],
                 [1.0, "#e8b04a"],
             ],
-            colorbar_title="Relative PSD dB/Hz",
+            colorbar=heatmap_colorbar("Relative PSD dB/Hz"),
         )
     )
     colors = ["#e8b04a", "#f0d48a", "#9eb3c9", "#8be0ef"]
@@ -322,7 +412,7 @@ def render_real(result):
         )
     )
     heatmap_layout(fig, "Seconds after acquisition start", "Doppler-corrected audio frequency (kHz)", 620)
-    st.plotly_chart(fig, width="stretch")
+    show_heatmap(fig)
     st.caption(
         f"Waterfall {power.shape[0]} time bins × {power.shape[1]} frequency bins. "
         "The measured ridge is extracted independently of candidate templates."
@@ -331,19 +421,35 @@ def render_real(result):
     st.subheader("Candidate evidence")
     rows = []
     for candidate in result["candidates"]:
-        ml_score = candidate["ml"].get("score")
         rows.append(
             {
                 "Candidate": candidate["name"],
                 "NORAD": candidate["catalog_id"],
-                "Physics score": round(candidate["score"], 3),
+                "Physics score": as_float(candidate["score"]),
                 "Frequency offset (Hz)": candidate["best_frequency_offset_hz"],
-                "Above-horizon support": round(candidate["above_horizon_support"], 3),
-                "Ridge RMS residual (Hz)": candidate["ridge_residual_rms_hz"],
-                "Synthetic-model score (uncalibrated)": None if ml_score is None else round(ml_score, 3),
+                "Above-horizon support": as_float(candidate["above_horizon_support"]),
+                "Ridge RMS residual (Hz)": as_float(candidate["ridge_residual_rms_hz"]),
+                "Synthetic-model score (uncalibrated)": as_float(candidate["ml"].get("score")),
             }
         )
-    st.dataframe(rows, width="stretch", hide_index=True)
+    st.caption(
+        "Synthetic-model scores are uncalibrated. A displayed value of 1.000 is not certainty "
+        "and is not a probability of satellite recovery."
+    )
+    st.dataframe(
+        rows,
+        width="stretch",
+        hide_index=True,
+        column_config={
+            "Physics score": st.column_config.NumberColumn(format="%.3f"),
+            "Above-horizon support": st.column_config.NumberColumn(format="%.3f"),
+            "Ridge RMS residual (Hz)": st.column_config.NumberColumn(format="%.1f"),
+            "Synthetic-model score (uncalibrated)": st.column_config.NumberColumn(
+                format="%.3f",
+                help="Uncalibrated synthetic-model score. Not a recovery probability.",
+            ),
+        },
+    )
 
     cols = st.columns(3)
     cards = [
@@ -412,10 +518,10 @@ def render_synthetic(result):
         st.warning("Controls have changed since this result was computed. Select **Run analysis** to update it.")
     provenance = result["provenance"]
     orbit = provenance["orbit"]
+    orbit_badge_class = "lp-badge amber" if orbit["kind"] == "synthetic_orbit_fallback" else "lp-badge"
     st.markdown(
         '<span class="lp-badge amber">Radio: simulated</span>'
-        f'<span class="lp-badge{" amber" if orbit["kind"] == "synthetic_orbit_fallback" else ""}">'
-        f'Orbit: {orbit["kind"]}</span>'
+        f'<span class="{orbit_badge_class}">{orbit_kind_label(orbit["kind"])}</span>'
         '<span class="lp-badge">Experiment: synthetic (not a recording)</span>',
         unsafe_allow_html=True,
     )
@@ -450,7 +556,7 @@ def render_synthetic(result):
                 [0.85, "#3ec6e0"],
                 [1.0, "#e8b04a"],
             ],
-            colorbar_title="Relative power (dB)",
+            colorbar=heatmap_colorbar("Relative power (dB)"),
         )
     )
     fig.add_trace(
@@ -480,7 +586,7 @@ def render_synthetic(result):
             )
         )
     heatmap_layout(fig, "Elapsed seconds", "Offset from assumed 437 MHz (kHz)", 520)
-    st.plotly_chart(fig, width="stretch")
+    show_heatmap(fig)
     st.caption(f"Waterfall {power.shape[0]} time bins × {power.shape[1]} frequency bins. Ground truth is display-only.")
 
     cols = st.columns(3)
@@ -530,10 +636,16 @@ def render_synthetic(result):
 
 if st.session_state.input_mode == "Real recording replay":
     if st.session_state.real_result is None:
-        st.info(
-            "Select **Analyze recording** to run the bundled, validated SatNOGS observation entirely offline. "
-            "The included audio is an archived real reception, not a live receiver or synthetic substitute."
-        )
+        if st.session_state.real_source == "Bundled validated SatNOGS observation":
+            st.info(
+                "Select **Analyze recording** to run the bundled, validated SatNOGS observation entirely offline. "
+                "That audio is an archived real reception, not a live receiver or a synthetic substitute."
+            )
+        else:
+            st.info(
+                "Upload both an OGG or WAV recording and its LastPing metadata manifest (JSON), "
+                "then select **Analyze recording**. This mode does not use the bundled observation."
+            )
     else:
         render_real(st.session_state.real_result)
 else:
