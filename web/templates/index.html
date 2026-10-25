@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta name="theme-color" content="#07111d" />
+    <title>PulsePath • Vision checkpoints</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <h1>Pulse<span>Path</span></h1>
+        <div class="live-pill" id="livePill"><i></i><span id="connectionText">READY</span></div>
+      </header>
+
+      <section class="camera-stage" aria-label="Camera and detected obstacles">
+        <video id="camera" autoplay muted playsinline></video>
+        <canvas id="overlay"></canvas>
+        <div class="empty-state" id="emptyState">
+          <div class="camera-mark" aria-hidden="true"></div>
+          <strong>Camera is off</strong>
+          <span>Tap Start Camera to begin</span>
+        </div>
+      </section>
+
+      <section class="checkpoints" aria-label="Vision test checkpoints">
+        <article><small>CHECKPOINT 01</small><h2>Recognition under obstruction</h2>
+          <p id="detectionStatus">Start camera to test detection.</p>
+          <label><input type="checkbox" id="occluded"> My hand is partially covering the target</label>
+          <p id="testCounts">No test frames yet.</p>
+          <button id="resetTest" type="button">Reset trial</button>
+        </article>
+        <article><small>CHECKPOINT 02</small><h2>Live object distance</h2>
+          <p id="depthMode">Automatic indoor depth: no object height or ruler setup required. Estimates are learned from the image and can be wrong.</p>
+          <img id="depthPreview" alt="Live estimated depth map: bright is near, dark is far" hidden style="width:100%;max-width:320px;border-radius:8px">
+          <p id="depthTiming"></p>
+          <label>Object to measure <select id="sizeLabel"><option value="">Start camera to select an object</option></select></label>
+          <details id="manualSettings"><summary>Manual height-based mode (server option)</summary><label>Measured height (metres) <input id="objectHeight" type="number" min="0.005" max="5" step="0.001" placeholder="Measure your object"></label>
+          <label>Current ruler distance to object centre (metres) <input id="referenceDistance" type="number" min="0.01" step="0.01" placeholder="Measure camera to object"></label>
+          <button id="calibrateDistance" type="button">Set distance from this reference</button>
+          <p id="referenceStatus">Select an object, enter its height and current ruler distance, and confirm full visibility below. Keep it still while setting the reference.</p>
+          <label>Camera horizontal FOV (degrees, if uncalibrated) <input id="cameraFov" type="number" min="2" max="178" placeholder="From camera specification"></label>
+          <label><input id="fullHeight" type="checkbox"> Full height is visible and upright, parallel to the image plane</label>
+          </details>
+          <p id="distanceStatus">Start camera for automatic estimates.</p>
+          <p id="liveRange" class="live-range" role="status">Distance: start camera</p>
+          <div id="objectDistances" aria-live="polite"></div>
+          <p id="distanceDetails">Automatic estimates sample visible surfaces. Hands or background inside a box can affect the result.</p>
+          <label>Validation reference (metres; same depth/range convention as readout) <input id="groundTruth" type="number" min="0.01" step="0.01" placeholder="e.g. 0.50"></label>
+          <p id="distanceError">Enter a ruler measurement to compare.</p>
+          <details><summary>Calibrated marker reference</summary><p id="markerDetails">No current marker measurement.</p></details>
+        </article>
+        <article><small>CHECKPOINT 03 · HARDWARE</small><h2>Three channels</h2>
+          <p id="pluginStatus">Scene adapter: preview only</p><p id="hapticStatus">Left 0 · Centre 0 · Right 0</p>
+          <p>Signals indicate the marker's position, not a direction to walk. No valid range means all outputs off.</p>
+        </article>
+        <button id="snapshot" type="button">Save current diagnostic snapshot</button>
+        <p id="snapshotStatus"></p>
+        <button id="exportTest" type="button">Download test measurements</button>
+      </section>
+      <section class="control-panel">
+        <p class="scene-text" id="sceneText">Point the camera toward an object.</p>
+        <div class="controls">
+          <button class="primary" id="startButton" type="button">
+            <span aria-hidden="true">◉</span><span id="startLabel">START CAMERA</span>
+          </button>
+          <button class="icon-button" id="flipButton" type="button" aria-label="Flip camera" disabled>↻</button>
+        </div>
+        <p class="safety">⚠ <span>Prototype only — keep using your mobility aid.</span></p>
+      </section>
+    </main>
+    <canvas id="capture" hidden></canvas>
+    <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+  </body>
+</html>

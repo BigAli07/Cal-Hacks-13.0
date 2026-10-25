@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.pt
+*.onnx
+*.jsonl
+pi/.ultralytics/
+models/
+datasets/
+runs/
+calibration.json
+deliverables/

@@ -1,0 +1,2 @@
+-r requirements.txt
+clip @ git+https://github.com/ultralytics/CLIP.git
