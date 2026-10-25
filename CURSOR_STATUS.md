@@ -11,8 +11,9 @@ Date: 2026-10-25
 | Remote verified | `origin` = `https://github.com/BigAli07/Cal-Hacks-13.0.git` |
 | Branch | `cursor/interface` |
 | Interface commit | `83ec659de130eeed282341a769e99012c36d997f` |
-| Push | pending at time of writing this file; verified after `git push` |
-| PR | opened after push; not merged |
+| Branch tip (status included) | `9f673340957403798224a26d4181a8a31757f3af` |
+| Push | verified: `git ls-remote origin refs/heads/cursor/interface` = `9f673340957403798224a26d4181a8a31757f3af` |
+| PR | https://github.com/BigAli07/Cal-Hacks-13.0/pull/1 (not merged) |
 
 Also present on GitHub: private `BigAli07/cal-hacks` (vision/pi/web, branch `codex/vision-checkpoints`). That is a different project. It was not overwritten.
 
