@@ -6,9 +6,9 @@ Repository: `https://github.com/BigAli07/Cal-Hacks-13.0.git`
 
 Branch: `cursor/lastping-integrated`
 
-Publication status: **blocked before remote update**. The remote branch remains
-at `1e122bc93ed17cbbb4161d1f60b1c707b0c61195`; the verified release commits are
-preserved locally.
+Publication status: **published**. GitHub contains the implementation commit
+`c99276e01187d4f439048883d01ca843ef185789` and handoff commit
+`cfb05a675df151d460ebf212959e2c878fd86f4c` on the integration branch.
 
 Exact verified implementation revision:
 `c99276e01187d4f439048883d01ca843ef185789`
@@ -56,9 +56,19 @@ margin `4.1773315627`; total processing `3.5565` seconds. The strict JSON check
 passed, the compact export omitted `observed_power`, the ML status was
 `experimental_uncalibrated`, and real thresholds were unavailable as intended.
 
-The same commands are encoded in `.github/workflows/lastping.yml`. Remote CI has
-**not started** because GitHub rejected the workflow-file push. Local success is
-not reported as remote CI success.
+The same commands are encoded in `.github/workflows/lastping.yml`. Remote CI
+completed successfully on handoff SHA `cfb05a675df151d460ebf212959e2c878fd86f4c`:
+
+- Push run: `https://github.com/BigAli07/Cal-Hacks-13.0/actions/runs/40200784197`
+  — **success**, one job completed in 1 minute 20 seconds.
+- PR run: `https://github.com/BigAli07/Cal-Hacks-13.0/actions/runs/40200784335`
+  — **success**, one job completed in 2 minutes 19 seconds.
+
+Both runs passed checkout, Python 3.12 setup, libsndfile/runtime/test dependency
+installation, compilation, saved-model loading, scoped tests, and compact
+offline replay/strict JSON export. Informational annotations noted the GitHub
+Actions Node.js 20 transition and the future `ubuntu-latest` image migration;
+they did not fail the job.
 
 ## Supported demonstration claim
 
@@ -87,12 +97,10 @@ measured real false-alarm performance.
   real RF.
 - WAV support is verified for the PCM-16 derivative of the same licensed OGG,
   not for arbitrary codecs or independent observations.
-- Remote CI must complete before it is described as passing.
-- Publishing is blocked by GitHub authentication scope. The active OAuth token
-  has `gist`, `read:org`, and `repo`, but not `workflow`. Git rejected the push
-  with `refusing to allow an OAuth App to create or update workflow
-  .github/workflows/lastping.yml without workflow scope`; the connected GitHub
-  integration independently returned HTTP 403 for the same workflow write.
+- The workflow currently uses `actions/checkout@v4` and
+  `actions/setup-python@v5`; GitHub emitted an informational notice that their
+  Node.js 20 implementations are being forced onto Node.js 24. A later
+  maintenance update should adopt successor action versions when available.
 
 ## Presentation readiness
 

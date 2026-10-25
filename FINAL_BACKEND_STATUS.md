@@ -145,11 +145,10 @@ strict JSON and calibration assertions
 
 ## 2. Implemented but unverified
 
-- The new GitHub Actions workflow passed the same commands locally but has not
-  passed remotely. Publication is blocked because the active GitHub OAuth token
-  has `repo` but not `workflow` scope; GitHub rejected the push before changing
-  the remote branch. The connected GitHub integration also returned HTTP 403
-  for the workflow-file write.
+- The GitHub Actions workflow passed on the published handoff SHA for both the
+  push run (`40200784197`) and PR run (`40200784335`). Both remote jobs executed
+  dependency installation, compilation, artifact loading, scoped tests, and
+  compact offline replay/export successfully.
 - The test requirements resolved in the existing clean worktree environment;
   the remote Python 3.12 CI run is the pending clean-run confirmation.
 - WAV compatibility is verified for the test-generated PCM-16 derivative and
@@ -174,15 +173,11 @@ strict JSON and calibration assertions
   identification, and recovery remain unmeasured. The supported demonstration
   claim is exactly: **“Candidate-track analysis of one independently supported
   archived satellite reception.”**
-- Remote CI status is pending after push and must not be called passing until
-  GitHub reports completion. At handoff, the workflow has not reached the remote
-  repository and CI has not started.
-- **Publication blocker:** `git push origin cursor/lastping-integrated` was
-  rejected with `refusing to allow an OAuth App to create or update workflow
-  .github/workflows/lastping.yml without workflow scope`. `gh auth status`
-  reports scopes `gist`, `read:org`, and `repo`; `workflow` is absent. Remote
-  remains at `1e122bc93ed17cbbb4161d1f60b1c707b0c61195`. The verified local
-  commits are preserved and no force-push was attempted.
+- No publication blocker remains. The implementation and handoff commits are on
+  the remote integration branch, and both scoped CI triggers passed. The CI
+  annotations concern GitHub's Node.js/action-runtime and runner-image
+  transitions; they are informational maintenance notices, not LastPing test
+  failures.
 
 ### Presentation readiness and ownership boundary
 
