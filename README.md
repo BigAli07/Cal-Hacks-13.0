@@ -19,15 +19,32 @@ CelesTrak orbital elements with an explicitly assumed 437 MHz carrier.
 
 ## Setup and commands
 
+Runtime installation and startup:
+
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install -r requirements-lastping.txt
 .venv/bin/python -m core.real_data
+.venv/bin/streamlit run app.py
+```
+
+Reproducible test installation and the complete scoped LastPing checks:
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install -r requirements-test.txt
+.venv/bin/python -m compileall -q app.py core
+.venv/bin/python -m pytest -q tests/test_lastping_app.py tests/test_lastping.py tests/test_real_data.py
+.venv/bin/python -m core.real_data --output /tmp/lastping-real-replay.json
+.venv/bin/python -c 'import json,sys; result=json.load(open(sys.argv[1], encoding="utf-8")); assert result["status"] == "ok"; assert "observed_power" not in result' /tmp/lastping-real-replay.json
+```
+
+Optional explicit data/model maintenance commands:
+
+```bash
 .venv/bin/python -c 'from core.orbit import fetch_celestrak_cache; print(fetch_celestrak_cache())'
 .venv/bin/python -m core.training train
 .venv/bin/python -m core.training benchmark
-.venv/bin/python -m pytest -q tests/test_lastping.py
-.venv/bin/streamlit run app.py
 ```
 
 The default real replay is bundled and works offline; the network is needed
@@ -66,6 +83,12 @@ background power)`. It is not measured RF SNR or receiver sensitivity. ML
 output is a synthetic-model score, not a probability of satellite recovery.
 False alarms are possible and are reported rather than suppressed using hidden
 simulation truth.
+
+The supported WAV path is verified by the backend tests using a temporary
+PCM-16 WAV derived from the licensed bundled OGG. That conversion tests
+container compatibility only; it is the same observation and is not additional
+real-data evidence. No converted WAV is committed or presented as an
+independent reception.
 
 See [DATA_SOURCES.md](DATA_SOURCES.md), [MODEL_CARD.md](MODEL_CARD.md),
 [HANDOFF.md](HANDOFF.md), and [VERIFICATION.md](VERIFICATION.md) for provenance,

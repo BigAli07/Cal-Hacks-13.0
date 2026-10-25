@@ -1,16 +1,45 @@
 import copy
+import hashlib
+import io
 import json
 
 import numpy as np
 import pytest
+import soundfile as sf
 
 from core.real_data import (BUNDLED_MANIFEST, RecordingValidationError,
                             analyze_real, load_manifest)
+
+REAL_DIR = BUNDLED_MANIFEST.parent
+REAL_OGG = REAL_DIR / "satnogs_6659851_2022-10-26T04-12-41.ogg"
+
+
+def _wav_bytes(samples: np.ndarray, sample_rate_hz: int) -> bytes:
+    stream = io.BytesIO()
+    sf.write(stream, samples, sample_rate_hz, format="WAV", subtype="PCM_16")
+    return stream.getvalue()
+
+
+def _manifest_for_bytes(data: bytes, *, filename: str = "converted.wav") -> dict:
+    manifest, _ = load_manifest(BUNDLED_MANIFEST)
+    converted = copy.deepcopy(manifest)
+    converted["recording_file"] = filename
+    converted["recording_sha256"] = hashlib.sha256(data).hexdigest()
+    converted["recording_format"]["container"] = "WAV"
+    converted["recording_format"]["codec"] = "PCM signed 16-bit little-endian"
+    return converted
 
 
 @pytest.fixture(scope="module")
 def replay():
     return analyze_real()
+
+
+@pytest.fixture(scope="module")
+def converted_wav():
+    samples, sample_rate_hz = sf.read(REAL_OGG, dtype="float32", always_2d=False)
+    data = _wav_bytes(samples, sample_rate_hz)
+    return data, _manifest_for_bytes(data)
 
 
 def test_bundled_recording_is_validated_and_native_spectrogram_is_preserved(replay):
@@ -59,3 +88,27 @@ def test_bad_hash_and_incomplete_metadata_are_rejected():
     incomplete = json.dumps({"schema": "lastping-real-recording-v1"}).encode()
     with pytest.raises(RecordingValidationError, match="missing required fields"):
         load_manifest(incomplete)
+
+
+def test_pcm_wav_derived_from_bundled_recording_runs_full_pipeline(converted_wav):
+    data, manifest = converted_wav
+    result = analyze_real(recording=data, manifest_source=manifest)
+    assert result["recording"]["local_source"] == "uploaded recording"
+    assert result["signal_processing"]["decoded_sample_rate_hz"] == 48000
+    assert result["signal_processing"]["decoded_channels"] == 1
+    assert result["best_candidate"]["catalog_id"] == "39444"
+    assert result["conclusion"] == "candidate_match"
+
+
+@pytest.mark.parametrize(
+    ("samples", "sample_rate_hz", "error"),
+    [
+        (np.zeros(4096, dtype=np.float32), 44100, "sample rate mismatch"),
+        (np.zeros((4096, 2), dtype=np.float32), 48000, "expected one real audio channel"),
+    ],
+)
+def test_wav_sample_rate_and_channel_mismatches_are_rejected(samples, sample_rate_hz, error):
+    data = _wav_bytes(samples, sample_rate_hz)
+    manifest = _manifest_for_bytes(data, filename="malformed.wav")
+    with pytest.raises(RecordingValidationError, match=error):
+        analyze_real(recording=data, manifest_source=manifest)
